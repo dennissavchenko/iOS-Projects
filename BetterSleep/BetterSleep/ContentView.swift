@@ -56,12 +56,19 @@ struct ContentView: View {
                 Text(alertMessage)
             }
         }
+        .onAppear {
+            NotificationManager.shared.requestAuthorization()
+        }
     }
     
     func convertDecimalToTime(_ decimal: Double) -> String {
         let hours = Int(decimal)
         let minutes = Int((decimal - Double(hours)) * 60)
         return String(format: "%d:%02d", hours, minutes)
+    }
+    
+    func setReminder(hour: Int, minute: Int) {
+        NotificationManager.shared.scheduleNotification(hour: hour, minute: minute)
     }
     
     func calculateBedtime() {
@@ -79,6 +86,12 @@ struct ContentView: View {
 
             alertTitle = "Your ideal bedtime is…"
             alertMessage = LocalizedStringKey(sleepTime.formatted(date: .omitted, time: .shortened))
+            
+            let sleepComponents = Calendar.current.dateComponents([.hour, .minute], from: sleepTime)
+            if let sleepHour = sleepComponents.hour, let sleepMinute = sleepComponents.minute {
+                setReminder(hour: sleepHour, minute: sleepMinute)
+            }
+            
         } catch {
             alertTitle = "Error"
             alertMessage = "Sorry, there was a problem calculating your bedtime."

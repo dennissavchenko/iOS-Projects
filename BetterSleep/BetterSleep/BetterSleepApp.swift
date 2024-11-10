@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct BetterSleepApp: App {
+    
+    @Environment(\.scenePhase) var scenePhase
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .onChange(of: scenePhase) { 
+                    if scenePhase == .active {
+                        NotificationManager.shared.setBadgeCount(0)
+                    }
+                }
         }
     }
 }

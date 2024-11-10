@@ -11,6 +11,9 @@
         }
       }
     },
+    "%@" : {
+
+    },
     "%@ hours" : {
       "localizations" : {
         "uk" : {
@@ -52,7 +55,15 @@
       }
     },
     "cup" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "чашка"
+          }
+        }
+      }
     },
     "Daily coffee intake" : {
       "localizations" : {
@@ -105,6 +116,7 @@
       }
     },
     "Please enter a time" : {
+      "extractionState" : "stale",
       "localizations" : {
         "uk" : {
           "stringUnit" : {
@@ -113,6 +125,9 @@
           }
         }
       }
+    },
+    "Select a Date" : {
+
     },
     "Sorry, there was a problem calculating your bedtime." : {
       "localizations" : {
