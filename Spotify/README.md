@@ -1,4 +1,4 @@
-# Spotify Clone 🎶
+# Spotify 🎶
 
 **Spotify Clone** is an iOS app replicating the look and functionality of the Spotify music player. Built with MVVM architecture, this app provides a familiar and responsive experience for music lovers, including track navigation and real-time lyric fetching.
 

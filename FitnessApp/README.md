@@ -1,4 +1,4 @@
-# FitnessApp 💪
+# Fitness App 💪
 
 **FitnessApp** is an iOS app designed to gather and display user health information directly from the iPhone's native Health app using HealthKit. The app requests permission to access health data and presents it in a user-friendly grid view, offering an easy way for users to track their fitness and health metrics.
 

@@ -1,4 +1,4 @@
-# Airbnb Clone 🏡
+# Airbnb 🏡
 
 **Airbnb Clone** is an iOS app project replicating the design and user experience of the original Airbnb app, delivering a seamless reservation and browsing experience. This app includes interactive maps and intuitive date selection for streamlined bookings, providing users with a familiar interface.
 
