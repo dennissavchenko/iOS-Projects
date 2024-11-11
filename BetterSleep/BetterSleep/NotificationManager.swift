@@ -44,6 +44,7 @@ class NotificationManager {
     
     func setBadgeCount(_ count: Int) {
         UNUserNotificationCenter.current().setBadgeCount(count)
+        //UNUserNotificationCenter.current().removeAllDeliveredNotifications()
     }
     
 }
