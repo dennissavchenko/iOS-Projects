@@ -6,3 +6,4 @@
 - **Bedtime Prediction**: Core ML model predicts optimal bedtime based on personalized user inputs.
 - **Custom UI Components**: Custom time picker and stepper for an intuitive setup.
 - **Localization**: Available in multiple languages for a broader user reach.
+- **Push Notifications**: Added push notifications, allowing users to receive timely reminders about their customized bedtime recommendations.
