@@ -6,10 +6,14 @@
 //
 
 import Foundation
+
 func readFileContents(song: String) -> String? {
+    
     guard let filePath = Bundle.main.path(forResource: song, ofType: "txt") else {
+        print("Couldn't find file at path: \(song).txt")
         return nil
     }
+    
     do {
         let fileHandle = try FileHandle(forReadingFrom: URL(fileURLWithPath: filePath))
         let fileData = fileHandle.readDataToEndOfFile()

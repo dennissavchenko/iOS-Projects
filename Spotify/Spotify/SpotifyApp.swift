@@ -12,6 +12,9 @@ struct SpotifyApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(AlbumsViewModel())
+                .environment(SongsViewModel())
+                .environment(Player())
         }
     }
 }

@@ -6,20 +6,29 @@
 //
 
 import Foundation
+import SwiftUI
+import UIKit
 
-struct Album {
+struct Album: Identifiable {
+    
+    var id = UUID()
     var name: String
-    var picture: String
+    var imageName: String
     var releaseYear: Int
-    var color_set: ColorSet
+    var artist: Artist
+    
+    var themeColor: Color {
+        if let image = UIImage(named: imageName) {
+            return Color(image.themeColor ?? UIColor.bg)
+        } else {
+            return .bg
+        }
+    }
+    
 }
 
-let album_1 = Album(name: "Born To Die", picture: "album_1", releaseYear: 2012, color_set: color_set_1)
+let album_1 = Album(name: "Born To Die", imageName: "album_1", releaseYear: 2012, artist: lana_del_rey)
+let album_2 = Album(name: "Paradise", imageName: "album_2", releaseYear: 2012, artist: lana_del_rey)
+let album_3 = Album(name: "Ultraviolence", imageName: "album_3", releaseYear: 2014, artist: lana_del_rey)
+let album_5 = Album(name: "Lust For Life", imageName: "album_5", releaseYear: 2017, artist: lana_del_rey)
 
-let album_2 = Album(name: "Paradise", picture: "album_2", releaseYear: 2012, color_set: color_set_2)
-
-let album_5 = Album(name: "Lust For Life", picture: "album_5", releaseYear: 2017, color_set: color_set_5)
-
-let album_3 = Album(name: "Ultraviolence", picture: "album_3", releaseYear: 2014, color_set: color_set_3)
-
-let albums = [album_1, album_2, album_3, album_5]

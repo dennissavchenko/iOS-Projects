@@ -1,60 +1,70 @@
 //
 //  AlbumsList.swift
-//  Bible
+//  Spotify
 //
 //  Created by Денис Савченко on 16/02/2023.
 //
 
 import SwiftUI
+import SwiftfulUI
 
 struct AlbumsList: View {
-    @State var show = false
-    @State var selectedAlbum: Int!
+    
+    var artist: Artist = lana_del_rey
+    
+    @Environment(AlbumsViewModel.self) private var albumsViewModel
+    
+    var sortedAlbums: [Album] {
+        albumsViewModel.getArtistsAlbums(artist: artist).sorted { $0.releaseYear > $1.releaseYear }
+    }
+    
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                HStack {
-                    VStack {
-                        Spacer()
-                        Text("Lana Del Rey")
-                            .foregroundColor(.white)
-                            .fontWeight(.black)
-                            .font(.system(size: 40))
-                            .padding(.horizontal)
-                            .padding(.bottom, 7)
-                        
-                    }
-                    Spacer()
-                }
-                .background(Image("singer")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(height: 300)
-                    .clipped())
-                .frame(height: 300)
-                ScrollView(showsIndicators: false) {
-                    LazyVStack {
-                        ForEach(0..<4) { i in
-                            AlbumListItem(album: albums[i]).onTapGesture {
-                                selectedAlbum = i
-                                show.toggle()
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 0) {
+                    Header(artist: artist)
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Popular Relases")
+                            .fontWeight(.medium)
+                            .foregroundStyle(.white)
+                        ForEach(sortedAlbums) { album in
+                            NavigationLink {
+                                AlbumView(album: album)
+                            } label: {
+                                AlbumListItem(album: album)
                             }
                         }
-                    }.padding(.top, 10)
-                }.background(.black.opacity(0.5))
-                    .foregroundColor(.white)
-                    .cornerRadius(5)
-            }.background(.black)
-                .ignoresSafeArea()
-            if selectedAlbum != nil && show {
-                Player(album_index: $selectedAlbum, show: $show)
+                    }.padding()
+                }
             }
+            .scrollIndicators(.hidden)
+            .background(.bg)
+            .ignoresSafeArea()
         }
     }
+    
+    func Header(artist: Artist) -> some View {
+        Rectangle()
+            .opacity(0)
+            .overlay (
+                Image(artist.imageName)
+                    .resizable()
+                    .scaledToFill()
+            )
+            .overlay(
+                Text(artist.name)
+                    .foregroundStyle(.white)
+                    .fontWeight(.bold)
+                    .font(.largeTitle)
+                    .padding(16)
+                    .frame(maxWidth: .infinity, alignment: .bottomLeading), alignment: .bottomLeading
+            )
+            .asStretchyHeader(startingHeight: 300)
+    }
+    
 }
 
-struct AlbumsList_Previews: PreviewProvider {
-    static var previews: some View {
-        AlbumsList()
-    }
+#Preview {
+    AlbumsList()
+        .environment(AlbumsViewModel())
 }
