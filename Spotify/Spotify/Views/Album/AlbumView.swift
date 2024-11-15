@@ -83,9 +83,6 @@ struct AlbumView: View {
             PlayerView()
                 .environment(player)
         }
-        .onAppear {
-            player.currentSong = track_1_5
-        }
         
     }
     

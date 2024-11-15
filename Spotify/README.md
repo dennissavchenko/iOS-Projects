@@ -17,4 +17,5 @@ The **Spotify** is an iOS application built using Swift and SwiftUI, designed to
 - **MVVM Architecture**: Used for clear separation of concerns between UI, logic, and data models.
 - **Combine**: For managing asynchronous data flow and updates to the UI.
 
-![Player](player.png)
+<img src="player.gif" alt="The App" height="800">
+
