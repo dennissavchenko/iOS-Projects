@@ -15,55 +15,129 @@ struct PlayerView: View {
     
     @Environment(\.dismiss) private var dismiss
     
+    @State private var offset: CGFloat = 0
+    
+    @State private var topPlayerHeight: CGFloat = 0
+    
+    @State private var proxy: ScrollViewProxy?
+    
+    var showHeader: Bool {
+        offset < 550
+    }
+    
     private let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 52) {
-                HStack {
-                    Image(systemName: "chevron.down")
-                        .font(.title2)
-                        .onTapGesture {
-                            dismiss()
+        ZStack(alignment: .top) {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(spacing: 52) {
+                        HStack {
+                            Image(systemName: "chevron.down")
+                                .font(.title2)
+                                .onTapGesture {
+                                    dismiss()
+                                }
+                            Spacer()
+                            Text(player.currentSong?.album.name ?? "")
+                                .font(.callout)
+                                .fontWeight(.semibold)
+                            Spacer()
+                            Image(systemName: "ellipsis")
+                                .font(.title2)
                         }
-                    Spacer()
-                    Text(player.currentSong?.album.name ?? "")
-                        .font(.callout)
-                        .fontWeight(.semibold)
-                    Spacer()
-                    Image(systemName: "ellipsis")
-                        .font(.title2)
+                        Image(player.currentSong?.album.imageName ?? "")
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .padding(4)
+                            .shadow(radius: 10)
+                        VStack(spacing: 16) {
+                            SongInfo
+                            SongSlider
+                            SongControlls
+                        }
+                        AboutArtist
+                            .readingFrame { frame in
+                                withAnimation {
+                                    offset = frame.maxY
+                                }
+                            }
+                        Lyrics
+                    }
+                    .padding()
+                    .foregroundStyle(.white)
+                    .background(LinearGradient(colors: [player.currentSong?.album.themeColor ?? .bg, .bg], startPoint: .top, endPoint: .bottom))
+                    .id(1)
                 }
-                Image(player.currentSong?.album.imageName ?? "")
-                    .resizable()
-                    .scaledToFit()
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .padding(4)
-                    .shadow(radius: 10)
-                VStack(spacing: 16) {
-                    SongInfo
-                    SongSlider
-                    SongControlls
+                .onAppear {
+                    self.proxy = proxy
                 }
-                AboutArtist
-                Lyrics
+                .scrollIndicators(.hidden)
+                .navigationBarBackButtonHidden()
+                .toolbar(.hidden)
+                .background {
+                    VStack {
+                        Color(player.currentSong?.album.themeColor ?? .bg)
+                        Color(.bg)
+                    }.ignoresSafeArea()
+                }
+                .onReceive(timer) { _ in
+                    if let currentTime = player.currentTime {
+                        progress = currentTime
+                    }
+                }
             }
-            .padding()
-            .foregroundStyle(.white)
-            .background(LinearGradient(colors: [player.currentSong?.album.themeColor ?? .bg, .bg], startPoint: .top, endPoint: .bottom))
-        }
-        .scrollIndicators(.hidden)
-        .navigationBarBackButtonHidden()
-        .toolbar(.hidden)
-        .background {
-            VStack {
-                Color(player.currentSong?.album.themeColor ?? .bg)
-                Color(.bg)
-            }.ignoresSafeArea()
-        }
-        .onReceive(timer) { _ in
-            if let currentTime = player.currentTime {
-                progress = currentTime
+            VStack(spacing: 0) {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(player.currentSong?.title ?? "")
+                            .foregroundStyle(.white)
+                            .fontWeight(.medium)
+                        Text(player.currentSong?.artistsToString ?? "")
+                            .foregroundStyle(Color(.systemGray4))
+                            .font(.footnote)
+                            .fontWeight(.medium)
+                    }
+                    Spacer()
+                    Image(systemName: "plus.circle")
+                        .font(.title2)
+                        .fontWeight(.medium)
+                        .padding(.horizontal)
+                    Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
+                        .font(.title2)
+                        .fontWeight(.medium)
+                        .padding(.horizontal)
+                        .onTapGesture {
+                            if player.isPlaying {
+                                player.pause()
+                            } else {
+                                player.play()
+                            }
+                        }
+                }
+                .readingFrame { frame in
+                    topPlayerHeight = frame.height
+                }
+                .foregroundStyle(.white)
+                .opacity(showHeader ? 1 : 0)
+                .padding()
+                ZStack(alignment: .leading) {
+                    Rectangle()
+                        .foregroundStyle(.gray)
+                        .frame(height: 2)
+                    Rectangle()
+                        .foregroundStyle(.white)
+                        .frame(width: UIScreen.main.bounds.width * (progress / Double (player.currentSong?.time ?? 1)), height: 2)
+                }.opacity(showHeader ? 1 : 0)
+            }
+            .frame(maxHeight: showHeader ? (safeArea?.top ?? 0) + topPlayerHeight + 24 : safeArea?.top, alignment: .bottom)
+            .background(showHeader ? (player.currentSong?.album.themeColor ?? .black) : player.currentSong?.album.themeColor.opacity(0.7) ?? .black.opacity(0.7))
+            .ignoresSafeArea()
+            .onTapGesture {
+                withAnimation {
+                    proxy?.scrollTo(1, anchor: .top)
+                }
             }
         }
     }
@@ -110,14 +184,16 @@ struct PlayerView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Lyrics")
                 .fontWeight(.bold)
-            Text(readFileContents(song: player.currentSong?.id ?? "") ?? "")
+            Text(readFileContents(song: player.currentSong?.id ?? "#10_3") ?? "")
                 .font(.title2)
                 .fontWeight(.bold)
                 .lineSpacing(8)
                 .frame(height: 200)
         }
         .padding()
-        .background(player.currentSong?.album.themeColor)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(player.currentSong?.album.themeColor
+        )
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .shadow(radius: 20)
     }
@@ -213,6 +289,18 @@ struct PlayerView: View {
             .font(.caption)
             .foregroundStyle(Color(.systemGray4))
         }
+    }
+    
+    var safeArea: UIEdgeInsets? {
+        guard let keyWindow = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .flatMap({ $0.windows })
+            .first(where: { $0.isKeyWindow })
+        else {
+            print("No key window found.")
+            return nil
+        }
+        return keyWindow.safeAreaInsets
     }
     
 }

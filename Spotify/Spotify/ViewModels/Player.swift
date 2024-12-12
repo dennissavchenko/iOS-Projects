@@ -13,7 +13,16 @@ class Player: NSObject, AVAudioPlayerDelegate {
     var player: AVAudioPlayer?
     var currentSong: Song?
     var songs: [Song] = []
-    var isPlaying = false
+    
+    var isPlayingState: Bool = false
+    
+    var isPlaying: Bool {
+        if let player = player {
+            return player.isPlaying
+        } else {
+            return false
+        }
+    }
     
     var shuffle = false
     var repeatMode: RepeatMode = .none
@@ -60,16 +69,11 @@ class Player: NSObject, AVAudioPlayerDelegate {
             player?.delegate = self
             player?.currentTime = 0
             player?.play()
-            isPlaying = true
+            isPlayingState = true
         } catch {
             return
         }
         
-    }
-    
-    func playAtTime(time: Double) {
-        player?.play(atTime: time)
-        isPlaying = true
     }
     
     func setTime(time: Double) {
@@ -78,12 +82,12 @@ class Player: NSObject, AVAudioPlayerDelegate {
 
     func pause() {
         player?.pause()
-        isPlaying = false
+        isPlayingState = false
     }
     
     func play() {
         player?.play()
-        isPlaying = true
+        isPlayingState = true
     }
     
     private func getCurrentSongIndex() -> Int? {

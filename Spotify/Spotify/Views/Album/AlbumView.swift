@@ -72,8 +72,9 @@ struct AlbumView: View {
         .overlay(alignment: .bottom) {
             if player.currentSong != nil && isPlayerPresented == false {
                 SmallPlayerView()
-                    .environment(player)
                     .padding(8)
+                    .environment(player)
+                    .shadow(color: .bg, radius: 10)
                     .onTapGesture {
                         isPlayerPresented.toggle()
                     }
