@@ -19,7 +19,6 @@ The **Spotify** is an iOS application built using Swift and SwiftUI, designed to
 
 <video width="600" autoplay loop muted>
   <source src="player.MP4" type="video/mp4">
-  Your browser does not support the video tag.
 </video>
 
 
