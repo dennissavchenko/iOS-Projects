@@ -62,24 +62,13 @@ struct AlbumView: View {
                             }
                     }
                     .padding(12)
-                }
+                }.padding(.bottom, 80)
             }
             .scrollIndicators(.hidden)
             Header(album: album)
         }
         .toolbar(.hidden)
         .background(.bg)
-        .overlay(alignment: .bottom) {
-            if player.currentSong != nil && isPlayerPresented == false {
-                SmallPlayerView()
-                    .padding(8)
-                    .environment(player)
-                    .shadow(color: .bg, radius: 10)
-                    .onTapGesture {
-                        isPlayerPresented.toggle()
-                    }
-            }
-        }
         .fullScreenCover(isPresented: $isPlayerPresented) {
             PlayerView()
                 .environment(player)
@@ -129,6 +118,7 @@ struct AlbumView: View {
             .overlay (
                 VStack(alignment: .leading, spacing: 6) {
                     Text(album.name)
+                        .lineLimit(1)
                         .fontWeight(.bold)
                         .font(.title)
                         .foregroundStyle(.white)

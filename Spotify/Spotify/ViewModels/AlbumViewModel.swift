@@ -13,11 +13,11 @@ class AlbumsViewModel {
     var albums: [Album]
     
     init() {
-        albums = [album_1, album_2, album_3, album_5]
+        albums = [album_2, album_3, album_5]
     }
     
     func getArtistsAlbums(artist: Artist) -> [Album] {
-        return albums.filter { $0.artist.id == artist.id }
+        albums.filter { $0.artist.id == artist.id }
     }
     
 }

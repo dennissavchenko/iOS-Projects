@@ -13,7 +13,7 @@ class SongsViewModel {
     var songs: [Song] = []
     
     init() {
-        songs = tracks_1 + tracks_2 + tracks_3 + tracks_5
+        songs = tracks_2 + tracks_3 + tracks_5
     }
     
     func getArtistsSongs(artist: Artist) -> [Song] {

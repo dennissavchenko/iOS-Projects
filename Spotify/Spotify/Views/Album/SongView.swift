@@ -19,6 +19,8 @@ struct SongView: View {
     
     var song: Song
     
+    var isPopular: Bool = false
+    
     var isChosen: Bool {
         if let currentSong = player.currentSong {
             if currentSong.id == song.id {
@@ -41,7 +43,7 @@ struct SongView: View {
                         .fontWeight(.medium)
                         .lineLimit(1)
                 }
-                Text(song.artistsToString)
+                Text(isPopular ? song.playedTimes.formatted() : song.artistsToString)
                     .font(.footnote)
                     .foregroundStyle(Color(.systemGray4))
             }
@@ -83,19 +85,6 @@ struct SongView: View {
         }
     }
     
-//    private func startAnimatingBars() {
-//        stopAnimatingBars()
-//        timer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { _ in
-//            barHeights = barHeights.map { _ in CGFloat.random(in: 2...10) }
-//        }
-//    }
-//
-//    private func stopAnimatingBars() {
-//        timer?.invalidate()
-//        timer = nil
-//        barHeights = [2, 2, 2]
-//    }
-    
     private func startAnimatingBars() {
         isAnimating = true
         Task {
@@ -114,6 +103,7 @@ struct SongView: View {
 }
 
 #Preview {
-    SongView(song: track_1_1)
+    SongView(song: track_1_2)
         .environment(Player())
+        .environment(SongsViewModel())
 }

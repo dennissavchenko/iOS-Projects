@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import MediaPlayer
 
 enum RepeatMode {
     case none
@@ -24,6 +25,10 @@ class Player: NSObject, AVAudioPlayerDelegate {
         }
     }
     
+    var duration: Int {
+        Int(player?.duration ?? 0)
+    }
+    
     var shuffle = false
     var repeatMode: RepeatMode = .none
     
@@ -42,6 +47,8 @@ class Player: NSObject, AVAudioPlayerDelegate {
     override init() {
         
         super.init()
+        
+        setupRemoteCommandCenter()
         
         let audioSession = AVAudioSession.sharedInstance()
         
@@ -70,6 +77,7 @@ class Player: NSObject, AVAudioPlayerDelegate {
             player?.currentTime = 0
             player?.play()
             isPlayingState = true
+            updateNowPlayingInfo()
         } catch {
             return
         }
@@ -78,16 +86,19 @@ class Player: NSObject, AVAudioPlayerDelegate {
     
     func setTime(time: Double) {
         player?.currentTime = time
+        updateNowPlayingInfo()
     }
 
     func pause() {
         player?.pause()
         isPlayingState = false
+        updateNowPlayingInfo()
     }
     
     func play() {
         player?.play()
         isPlayingState = true
+        updateNowPlayingInfo()
     }
     
     private func getCurrentSongIndex() -> Int? {
@@ -142,5 +153,60 @@ class Player: NSObject, AVAudioPlayerDelegate {
             }
         }
     }
+
+    func updateNowPlayingInfo() {
+        guard let player = player else { return }
+        
+        var nowPlayingInfo = [String: Any]()
+        nowPlayingInfo[MPMediaItemPropertyTitle] = currentSong?.title
+        nowPlayingInfo[MPMediaItemPropertyArtist] = currentSong?.artistsToString
+        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = currentSong?.album.name
+        
+        if let image = UIImage(named: currentSong?.album.imageName ?? "") {
+            nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+        }
+        
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = player.currentTime
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = player.duration
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = player.rate
+
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+    }
+    
+    func setupRemoteCommandCenter() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+        
+        commandCenter.playCommand.addTarget { [weak self] event in
+            self?.play()
+            return .success
+        }
+        
+        commandCenter.pauseCommand.addTarget { [weak self] event in
+            self?.pause()
+            return .success
+        }
+        
+        commandCenter.nextTrackCommand.addTarget { event in
+            self.nextSong()
+            return .success
+        }
+        
+        commandCenter.previousTrackCommand.addTarget { event in
+            self.previousSong()
+            return .success
+        }
+        
+        commandCenter.changePlaybackPositionCommand.addTarget { [weak self] event in
+                guard let self = self, let player = self.player,
+                      let playbackEvent = event as? MPChangePlaybackPositionCommandEvent else {
+                    return .commandFailed
+                }
+                
+                self.setTime(time: playbackEvent.positionTime)
+                return .success
+            }
+        
+    }
+
     
 }

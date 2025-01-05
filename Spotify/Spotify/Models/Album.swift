@@ -27,8 +27,7 @@ struct Album: Identifiable {
     
 }
 
-let album_1 = Album(name: "Born To Die", imageName: "album_1", releaseYear: 2012, artist: lana_del_rey)
-let album_2 = Album(name: "Paradise", imageName: "album_2", releaseYear: 2012, artist: lana_del_rey)
+let album_2 = Album(name: "Born To Die - The Paradise Edition", imageName: "album_2", releaseYear: 2012, artist: lana_del_rey)
 let album_3 = Album(name: "Ultraviolence", imageName: "album_3", releaseYear: 2014, artist: lana_del_rey)
 let album_5 = Album(name: "Lust For Life", imageName: "album_5", releaseYear: 2017, artist: lana_del_rey)
 

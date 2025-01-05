@@ -21,6 +21,8 @@ struct PlayerView: View {
     
     @State private var proxy: ScrollViewProxy?
     
+    @State var areLyricsPresented: Bool = false
+    
     var showHeader: Bool {
         offset < 550
     }
@@ -97,7 +99,6 @@ struct PlayerView: View {
                         Text(player.currentSong?.artistsToString ?? "")
                             .foregroundStyle(Color(.systemGray4))
                             .font(.footnote)
-                            .fontWeight(.medium)
                     }
                     Spacer()
                     Image(systemName: "plus.circle")
@@ -124,14 +125,14 @@ struct PlayerView: View {
                 .padding()
                 ZStack(alignment: .leading) {
                     Rectangle()
-                        .foregroundStyle(.gray)
+                        .foregroundStyle(.white.opacity(0.1))
                         .frame(height: 2)
                     Rectangle()
                         .foregroundStyle(.white)
-                        .frame(width: UIScreen.main.bounds.width * (progress / Double (player.currentSong?.time ?? 1)), height: 2)
+                        .frame(width: UIScreen.main.bounds.width * (progress / Double (player.duration)), height: 2)
                 }.opacity(showHeader ? 1 : 0)
             }
-            .frame(maxHeight: showHeader ? (safeArea?.top ?? 0) + topPlayerHeight + 24 : safeArea?.top, alignment: .bottom)
+            .frame(maxHeight: showHeader ? (safeArea?.top ?? 0) + topPlayerHeight + 24 : safeArea?.top, alignment: .bottom) 
             .background(showHeader ? (player.currentSong?.album.themeColor ?? .black) : player.currentSong?.album.themeColor.opacity(0.7) ?? .black.opacity(0.7))
             .ignoresSafeArea()
             .onTapGesture {
@@ -140,6 +141,11 @@ struct PlayerView: View {
                 }
             }
         }
+        .fullScreenCover(isPresented: $areLyricsPresented) {
+            LyricsView()
+        }
+        .presentationBackground(.clear)
+        .mask(RoundedRectangle(cornerRadius: 8).ignoresSafeArea())
     }
     
     func secondsToTime(_ seconds: Int) -> String {
@@ -182,8 +188,21 @@ struct PlayerView: View {
     
     var Lyrics: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Lyrics")
-                .fontWeight(.bold)
+            HStack {
+                Text("Lyrics")
+                    .fontWeight(.bold)
+                Spacer()
+                Image(systemName: "arrow.down.left.and.arrow.up.right")
+                    .padding(8)
+                    .background {
+                        Circle()
+                            .foregroundStyle(.black.opacity(0.1))
+                    }
+                    .onTapGesture {
+                        areLyricsPresented.toggle()
+                    }
+                
+            }
             Text(readFileContents(song: player.currentSong?.id ?? "#10_3") ?? "")
                 .font(.title2)
                 .fontWeight(.bold)
@@ -271,7 +290,7 @@ struct PlayerView: View {
     
     var SongSlider: some View {
         VStack(spacing: 2) {
-            Slider(value: $progress, in: 0...Double(player.currentSong?.time ?? 0)) { editing in
+            Slider(value: $progress, in: 0...Double(player.duration)) { editing in
                     if !editing {
                         player.setTime(time: progress)
                     }
@@ -280,11 +299,12 @@ struct PlayerView: View {
                 .onAppear {
                     let progressCircleConfig = UIImage.SymbolConfiguration(scale: .small)
                     UISlider.appearance().setThumbImage(UIImage(systemName: "circle.fill", withConfiguration: progressCircleConfig), for: .normal)
+                    UISlider.appearance().maximumTrackTintColor = UIColor.white.withAlphaComponent(0.1)
                 }
             HStack {
                 Text(secondsToTime(Int(progress)))
                 Spacer()
-                Text("-\(secondsToTime(player.currentSong?.time ?? 0 - Int(progress)))")
+                Text("-\(secondsToTime(player.duration - Int(progress)))")
             }
             .font(.caption)
             .foregroundStyle(Color(.systemGray4))
