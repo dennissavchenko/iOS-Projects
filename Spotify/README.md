@@ -18,7 +18,15 @@ The **Spotify** is an iOS application built using Swift and SwiftUI, designed to
 - **Combine**: For managing asynchronous data flow and updates to the UI.
 
 <div style="text-align: center;">
-  <img src="player.gif" alt="The App" width="300" height="648">
+  <iframe 
+    width="300" 
+    height="648" 
+    src="https://www.youtube.com/watch?v=2pLAB-I5xns" 
+    title="Spotify App Demo" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+  </iframe>
 </div>
 
 
